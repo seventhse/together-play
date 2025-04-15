@@ -6,8 +6,6 @@ import { Button } from './ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from './ui/card';
@@ -41,7 +39,10 @@ export function ImageHistory() {
       setHistoryImages(images);
     } catch (error) {
       console.error('Failed to load image history:', error);
-      toast.error('Failed to load image history');
+      toast.error('Failed to Load History', {
+        description: 'There was a problem accessing your saved images. Please try again later.',
+        duration: 5000
+      });
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +56,10 @@ export function ImageHistory() {
       toast.success('Image deleted');
     } catch (error) {
       console.error('Failed to delete image:', error);
-      toast.error('Failed to delete image');
+      toast.error('Delete Failed', {
+        description: 'Could not delete the selected image. Please try again.',
+        duration: 5000
+      });
     }
   };
 
@@ -67,7 +71,10 @@ export function ImageHistory() {
       toast.success('Image history cleared');
     } catch (error) {
       console.error('Failed to clear image history:', error);
-      toast.error('Failed to clear image history');
+      toast.error('Clear History Failed', {
+        description: 'Could not clear your image history. Please try again later.',
+        duration: 5000
+      });
     }
   };
 
@@ -100,10 +107,14 @@ export function ImageHistory() {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="outline" onClick={() => document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]')?.click()}>Cancel</Button>
+                <Button variant="outline" onClick={() => {
+                  const closeButton = document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]') as HTMLButtonElement;
+                  closeButton?.click();
+                }}>Cancel</Button>
                 <Button variant="destructive" onClick={() => {
                   handleClearHistory();
-                  document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]')?.click();
+                  const closeButton = document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]') as HTMLButtonElement;
+                  closeButton?.click();
                 }}>Clear All</Button>
               </DialogFooter>
             </DialogContent>
@@ -147,16 +158,16 @@ export function ImageHistory() {
                     </div>
                     <div className="text-xs text-muted-foreground">
                       <span className="inline-block mr-2">
-                        {image.params.width}×{image.params.height}
+                        {String(image.params.width)}×{String(image.params.height)}
                       </span>
-                      {image.params.steps && (
+                      {image.params.steps !== undefined && (
                         <span className="inline-block mr-2">
-                          Steps: {image.params.steps}
+                          Steps: {String(image.params.steps)}
                         </span>
                       )}
-                      {image.params.guidance && (
+                      {image.params.guidance !== undefined && (
                         <span className="inline-block">
-                          Guidance: {image.params.guidance}
+                          Guidance: {String(image.params.guidance)}
                         </span>
                       )}
                     </div>
@@ -193,10 +204,14 @@ export function ImageHistory() {
                           </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
-                          <Button variant="outline" onClick={() => document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]')?.click()}>Cancel</Button>
+                          <Button variant="outline" onClick={() => {
+                            const closeButton = document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]') as HTMLButtonElement;
+                            closeButton?.click();
+                          }}>Cancel</Button>
                           <Button variant="destructive" onClick={() => {
-                            image.id && handleDeleteImage(image.id);
-                            document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]')?.click();
+                            if (image.id) handleDeleteImage(image.id);
+                            const closeButton = document.querySelector('[data-state="open"]')?.querySelector('button[data-state="closed"]') as HTMLButtonElement;
+                            closeButton?.click();
                           }}>Delete</Button>
                         </DialogFooter>
                       </DialogContent>
